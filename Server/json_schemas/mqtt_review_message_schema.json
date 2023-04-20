@@ -1,0 +1,69 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id" : "http://www.my-schema.com/mqtt_review_message_schema.json",
+    "title": "MQTT Message",
+    "description": "JSON Schema for MQTT Message",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "$schema": {
+        "type": "string",
+        "description": "path to the JSON Schema to use for the validation of the JSON file describing the MQTT Message"
+      },
+      "status": {
+        "type": "string",
+        "description": "current condition of the film (the available types are active if it is selected by a user, inactive if it is not selected by any user, or deleted if it has been removed from the service)",
+        "enum": ["active", "inactive", "deleted"]
+      },
+      "reviewerId": {
+        "type": "integer",
+        "description": "unique identifier of the the user who has received the review invitation"
+      },
+      "completed": {
+        "type": "boolean",
+        "description": "this property is set to true if the review has been completed, false otherwise",
+        "default": "false"
+      },  
+      "reviewDate": {
+        "type": "string",
+        "format": "date",
+        "description": "the date when the review has been completed by the invited user"
+      },
+      "rating": {
+        "type": "integer",
+        "description": "the rating the reviewer has given to the film",
+        "minimum": 1,
+        "maximum": 10
+      },
+      "review": {
+        "type": "string",
+        "description": "a textual description of the review",
+        "maxLength": 1000
+      }
+    },
+    "required": ["status", "reviewerId", "completed"],
+    "dependencies": {
+      "completed": {
+        "oneOf": [
+          {
+            "properties": {
+              "completed": {
+                "const": false
+              }
+            }
+          },
+          {
+            "properties": {
+              "completed": {
+                "const": true  
+              }
+            },
+            "required": [
+              "reviewDate", "rating", "review"
+            ]
+          }
+        ]
+      }
+    }
+}
+  
